@@ -18,7 +18,11 @@ public:
 		for (const auto & [e, transform, lua] : _em.getEntities<kengine::TransformComponent3f, kengine::LuaComponent>()) {
 			std::cout << "Entity " << e.id << '\n';
 
-			std::cout << "\tTransform: " << transform.boundingBox << '\n';
+			std::cout << "\tTransform: " 
+				<< transform.boundingBox.position.x << " "
+				<< transform.boundingBox.position.y << " "
+				<< transform.boundingBox.position.z
+				<< '\n';
 
 			std::cout << "\tScripts:" << '\n';
 			for (const auto & script : lua.getScripts())
@@ -34,7 +38,7 @@ private:
 
 int main(int, char **av) {
     // Go to the executable's directory to be next to resources and scripts
-    putils::goToBinDir(av[0]);
+    //putils::goToBinDir(av[0]);
 
     // Create an EntityManager
     kengine::EntityManager em; // Optionally, pass a number of threads as parameter (kengine::EntityManager em(4);)
@@ -50,7 +54,9 @@ int main(int, char **av) {
     // Create an Entity and attach Components to it
     em += [](kengine::Entity e) {
 		e += kengine::TransformComponent3f({ 42.f, 0.f, 42.f }); // Parameter is a Point3f for position
-		e += kengine::LuaComponent({ "scripts/unit.lua" }); // Parameter is a vector of scripts
+		auto c = kengine::LuaComponent({  }); // Parameter is a vector of scripts
+		c.attachScript("scripts/unit.lua");
+		e += c;
     };
 
 	// Register types to be used in lua
